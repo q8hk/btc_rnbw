@@ -14,7 +14,7 @@ if not bot_token:
 bot = telebot.TeleBot(bot_token)
 
 # Function to scrape the website and find bold words
-def scrape_and_send_changed_bold_words():
+def scrape():
     url = 'https://www.blockchaincenter.net/en/bitcoin-rainbow-chart/'
 
     try:
@@ -62,6 +62,6 @@ def write_current_data(data):
 # Run the scraping function once a day
 if __name__ == "__main__":
     while True:
-        scrape_and_send_changed_bold_words()
+        scrape()
         # Sleep for 24 hours (86400 seconds) before checking again
         time.sleep(86400)
