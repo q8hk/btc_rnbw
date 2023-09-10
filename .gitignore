@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+
+# IDE files
+.vscode/
+.idea/
+
+# Dependency management
+*.lock
+pip-log.txt
+requirements.txt
+
+# Logs and temporary files
+*.log
+*.swp
+*.swo
+*.swn
+*.swm
+*.bak
+
+# Ignore your API token files (replace with actual filenames)
+api_token.txt
+api_token.json
+
+# Ignore any sensitive credentials or secrets files
+*.secret
+
+# Ignore generated or user-specific files
+db.sqlite3
+db.sqlite
+db.json
