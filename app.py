@@ -17,31 +17,36 @@ bot = telebot.TeleBot(bot_token)
 def scrape():
     url = 'https://www.blockchaincenter.net/en/bitcoin-rainbow-chart/'
 
+    def make_request_with_retry(url, max_retries=3):
+        retries = 0
+        while retries < max_retries:
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                return response.text
+            except requests.exceptions.RequestException as e:
+                print(f"Request failed ({retries+1}/{max_retries}): {e}")
+                retries += 1
+                time.sleep(5)  # Wait for a few seconds before retrying
+        print("Max retries reached. Request failed.")
+        return None
+
     try:
-        response = requests.get(url)
-        response.raise_for_status()
+        response_text = make_request_with_retry(url)
+        if response_text is None:
+            return
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response_text, 'html.parser')
 
-        # Find all bold elements on the page
-        # bold_elements = soup.find_all(['b', 'strong'])
         active_span = soup.find('span', class_=lambda x: x and 'active' in x)
 
-
-        # Extract and concatenate the text from bold elements
-        bold_text = ' '.join([element.get_text() for element in active_span])
         active_text = active_span.get_text()
 
-        # Read the previously stored data from a file
         previous_data = read_previous_data()
 
-        # Compare the current bold words with the previous data
         if active_text != previous_data:
-            # Send the bold words as a message to the Telegram bot
-            bot.send_message(chat_id,bold_text)
-
-            # Update the stored data with the current bold words
-            write_current_data(bold_text)
+            bot.send_message(chat_id, active_text)
+            write_current_data(active_text)
     except Exception as e:
         print("Error:", e)
         bot.send_message(chat_id, "Error while scraping the website.")
